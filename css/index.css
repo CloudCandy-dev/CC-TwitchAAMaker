@@ -1,0 +1,1054 @@
+/**
+ * CC-TwitchAAMaker v1.0 - Styles
+ * 画像をTwitchチャット対応の点字AAに変換するWebアプリケーション
+ * 
+ * 清涼感・未来感・青春・サイダーをイメージした水色・青ベースのデザイン
+ * 
+ * @author CloudCandy
+ * @license MIT
+ * @version 1.0.0
+ */
+
+/* ----------------------------------------
+   CSS Variables - Theme System
+   ---------------------------------------- */
+:root {
+  /* Dark Theme (Default) - 深海から見上げる青空 */
+  --bg-main: #0a1628;
+  --bg-surface: #0f2140;
+  --bg-surface-hover: #153058;
+  --bg-input: #0d1c35;
+  --text-primary: #e8f4fc;
+  --text-secondary: #7eb8e0;
+  --text-muted: #4a8cbd;
+  --border-default: #1e4976;
+  --border-muted: #163a5c;
+  --accent-primary: #00d4ff;
+  --accent-primary-hover: #00b8e6;
+  --accent-secondary: #0099cc;
+  --accent-success: #00e5a0;
+  --accent-warning: #ffc857;
+  --accent-danger: #ff6b6b;
+  --shadow-color: rgba(0, 180, 255, 0.15);
+  --shadow-card: 0 10px 40px rgba(0, 150, 220, 0.35), 0 6px 20px rgba(0, 100, 180, 0.25);
+  --shadow-card-hover: 0 16px 50px rgba(0, 180, 255, 0.45), 0 8px 25px rgba(0, 130, 200, 0.3);
+  --glow-color: rgba(0, 212, 255, 0.4);
+  --glow-soft: rgba(0, 212, 255, 0.15);
+  --aa-bg: #081222;
+  --aa-text: #b8e0f7;
+  --preview-bg: #0d1c35;
+  --drop-zone-bg: linear-gradient(135deg, #0f2140 0%, #0a1a30 100%);
+  --drop-zone-border: #00d4ff;
+  --drop-zone-active-bg: linear-gradient(135deg, #153058 0%, #1a3a5c 100%);
+  --gradient-accent: linear-gradient(135deg, #00d4ff 0%, #0099ff 50%, #0066cc 100%);
+  --gradient-surface: linear-gradient(180deg, #0a1628 0%, #071020 100%);
+  --gradient-card: linear-gradient(180deg, #0f2140 0%, #0c1a32 100%);
+  --card-header-bg: linear-gradient(90deg, rgba(0, 212, 255, 0.1) 0%, transparent 100%);
+  --glass-bg: rgba(15, 33, 64, 0.8);
+  --glass-border: rgba(0, 212, 255, 0.2);
+}
+
+.theme-light {
+  /* Light Theme - 夏の空とソーダ水 */
+  --bg-main: #e8f7fc;
+  --bg-surface: #ffffff;
+  --bg-surface-hover: #d4f0fa;
+  --bg-input: #ffffff;
+  --text-primary: #0a3d5c;
+  --text-secondary: #2980b9;
+  --text-muted: #5dade2;
+  --border-default: #a8e0f5;
+  --border-muted: #c5eaf7;
+  --accent-primary: #00a8cc;
+  --accent-primary-hover: #0090b3;
+  --accent-secondary: #0077aa;
+  --accent-success: #00c896;
+  --accent-warning: #f5a623;
+  --accent-danger: #e74c3c;
+  --shadow-color: rgba(0, 150, 200, 0.12);
+  --shadow-card: 0 10px 40px rgba(0, 140, 180, 0.3), 0 6px 20px rgba(0, 100, 160, 0.2);
+  --shadow-card-hover: 0 16px 50px rgba(0, 160, 200, 0.4), 0 8px 25px rgba(0, 120, 180, 0.25);
+  --glow-color: rgba(0, 168, 204, 0.3);
+  --glow-soft: rgba(0, 168, 204, 0.1);
+  --aa-bg: #f0faff;
+  --aa-text: #0a3d5c;
+  --preview-bg: #f5fcff;
+  --drop-zone-bg: linear-gradient(135deg, #f0faff 0%, #e0f5fc 100%);
+  --drop-zone-border: #00a8cc;
+  --drop-zone-active-bg: linear-gradient(135deg, #d4f0fa 0%, #c5eaf7 100%);
+  --gradient-accent: linear-gradient(135deg, #00d4ff 0%, #00a8cc 50%, #0088aa 100%);
+  --gradient-surface: linear-gradient(180deg, #e8f7fc 0%, #d8f2fa 100%);
+  --gradient-card: linear-gradient(180deg, #ffffff 0%, #f5fcff 100%);
+  --card-header-bg: linear-gradient(90deg, rgba(0, 168, 204, 0.1) 0%, transparent 100%);
+  --glass-bg: rgba(255, 255, 255, 0.9);
+  --glass-border: rgba(0, 168, 204, 0.3);
+}
+
+/* ----------------------------------------
+   Base Styles
+   ---------------------------------------- */
+body {
+  background: var(--gradient-surface);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP", Helvetica, Arial, sans-serif;
+  transition: background 0.3s ease, color 0.3s ease;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ----------------------------------------
+   Header - サイダーの泡のような軽やかさ
+   ---------------------------------------- */
+.app-header {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: 0 4px 30px var(--shadow-color);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow: visible;
+  z-index: 1000;
+}
+
+/* ヘッダー固定によるコンテンツのオフセット */
+body {
+  padding-top: 90px; /* ヘッダーの高さ分 */
+}
+
+@media (max-width: 767.98px) {
+  body {
+    padding-top: 110px; /* モバイルでは高さが増える */
+  }
+}
+
+.app-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-accent);
+}
+
+.app-header h1 {
+  color: var(--text-primary);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.app-header h1 i {
+  color: var(--accent-primary);
+  filter: drop-shadow(0 0 8px var(--glow-color));
+}
+
+/* ----------------------------------------
+   Cards - 水色シャドウ付きガラス風カード
+   ---------------------------------------- */
+.card {
+  background: var(--gradient-card);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-primary), transparent);
+  opacity: 0.5;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.card-body {
+  background: transparent;
+  position: relative;
+  z-index: 1;
+}
+
+/* Card Headers - セクションタイトル */
+.card h2 {
+  color: var(--text-primary) !important;
+  font-weight: 700;
+  position: relative;
+  padding-left: 1rem;
+  letter-spacing: -0.01em;
+}
+
+.card h2::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 1.4em;
+  background: var(--gradient-accent);
+  border-radius: 2px;
+  box-shadow: 0 0 10px var(--glow-color);
+}
+
+.card h2 i {
+  color: var(--accent-primary);
+  filter: drop-shadow(0 0 6px var(--glow-color));
+}
+
+/* ----------------------------------------
+   Form Elements
+   ---------------------------------------- */
+.form-control,
+.form-select {
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  transition: all 0.25s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 4px var(--glow-soft), 0 0 20px var(--glow-color);
+}
+
+.form-control::placeholder {
+  color: var(--text-muted);
+}
+
+/* Labels */
+.form-label {
+  color: var(--text-primary) !important;
+  font-weight: 600;
+}
+
+.form-label span {
+  color: var(--text-primary);
+}
+
+.form-label i {
+  color: var(--accent-primary);
+  filter: drop-shadow(0 0 4px var(--glow-color));
+}
+
+/* Range Slider - 水滴のようなスライダー */
+.form-range {
+  height: 8px;
+}
+
+.form-range::-webkit-slider-thumb {
+  background: var(--gradient-accent);
+  border: 3px solid var(--accent-primary);
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px var(--glow-color), 0 0 20px var(--glow-soft);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-range::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 15px var(--glow-color), 0 0 30px var(--glow-soft);
+}
+
+.form-range::-moz-range-thumb {
+  background: var(--gradient-accent);
+  border: 3px solid var(--accent-primary);
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px var(--glow-color);
+}
+
+.form-range::-webkit-slider-runnable-track {
+  background: linear-gradient(90deg, var(--border-default), var(--border-muted));
+  height: 8px;
+  border-radius: 4px;
+}
+
+.form-range::-moz-range-track {
+  background: linear-gradient(90deg, var(--border-default), var(--border-muted));
+  height: 8px;
+  border-radius: 4px;
+}
+
+/* Checkbox & Switch */
+.form-check-input {
+  background-color: var(--bg-input);
+  border: 2px solid var(--border-default);
+  width: 1.3em;
+  height: 1.3em;
+  transition: all 0.2s ease;
+}
+
+.form-check-input:checked {
+  background-color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 12px var(--glow-color);
+}
+
+.form-check-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 4px var(--glow-soft);
+}
+
+.form-check-label {
+  color: var(--text-primary) !important;
+  font-weight: 500;
+}
+
+.form-switch .form-check-input {
+  width: 2.8em;
+  height: 1.5em;
+  border-radius: 1em;
+}
+
+/* ----------------------------------------
+   Buttons - 泡のようなボタン
+   ---------------------------------------- */
+.btn-primary {
+  background: var(--gradient-accent);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px var(--glow-color);
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 30px var(--glow-color);
+  background: var(--gradient-accent);
+  filter: brightness(1.1);
+}
+
+.btn-outline-secondary {
+  color: var(--text-primary);
+  border: 2px solid var(--border-default);
+  border-radius: 12px;
+  background: transparent;
+  font-weight: 500;
+  transition: all 0.25s ease;
+}
+
+.btn-outline-secondary:hover {
+  background: var(--bg-surface-hover);
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 15px var(--glow-soft);
+}
+
+/* ----------------------------------------
+   Badges - キラキラした飴玉
+   ---------------------------------------- */
+.badge.bg-primary {
+  background: var(--gradient-accent) !important;
+  font-weight: 700;
+  padding: 0.5em 1em;
+  border-radius: 20px;
+  box-shadow: 0 2px 10px var(--glow-color);
+  letter-spacing: 0.02em;
+}
+
+.badge.bg-secondary {
+  background: linear-gradient(135deg, var(--text-muted), var(--text-secondary)) !important;
+  border-radius: 20px;
+  font-weight: 600;
+}
+
+/* ----------------------------------------
+   Dropdown
+   ---------------------------------------- */
+.dropdown-menu {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-card);
+  padding: 0.75rem;
+  z-index: 1050;
+}
+
+.dropdown-item {
+  color: var(--text-primary);
+  border-radius: 10px;
+  padding: 0.6rem 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background: linear-gradient(90deg, var(--glow-soft), transparent);
+  color: var(--accent-primary);
+  transform: translateX(4px);
+}
+
+.dropdown-header {
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+
+.dropdown-divider {
+  border-color: var(--glass-border);
+  margin: 0.5rem 0;
+}
+
+/* ----------------------------------------
+   Drop Zone - 水面のような効果
+   ---------------------------------------- */
+.drop-zone {
+  background: var(--drop-zone-bg);
+  border: 2px dashed var(--border-default);
+  border-radius: 20px;
+  padding: 3.5rem 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.drop-zone::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, var(--glow-soft) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  animation: ripple-bg 3s ease-in-out infinite;
+}
+
+@keyframes ripple-bg {
+  0%, 100% { transform: scale(0.8); opacity: 0; }
+  50% { transform: scale(1); opacity: 0.3; }
+}
+
+.drop-zone:hover::before,
+.drop-zone.drag-over::before {
+  opacity: 1;
+}
+
+.drop-zone:hover,
+.drop-zone:focus {
+  border-color: var(--accent-primary);
+  border-style: solid;
+  box-shadow: var(--shadow-card), inset 0 0 30px var(--glow-soft);
+  outline: none;
+}
+
+.drop-zone.drag-over {
+  background: var(--drop-zone-active-bg);
+  border-color: var(--accent-primary);
+  border-style: solid;
+  transform: scale(1.02);
+  box-shadow: var(--shadow-card-hover), inset 0 0 40px var(--glow-soft);
+}
+
+.drop-zone-content {
+  pointer-events: none;
+  position: relative;
+  z-index: 1;
+}
+
+.drop-zone-content p {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.drop-zone-content .small {
+  color: var(--text-secondary);
+}
+
+.drop-zone-content i {
+  color: var(--accent-primary);
+  filter: drop-shadow(0 0 15px var(--glow-color));
+  transition: transform 0.3s ease;
+}
+
+.drop-zone:hover .drop-zone-content i {
+  transform: scale(1.1);
+}
+
+/* ----------------------------------------
+   Preview Container - 固定サイズ
+   ---------------------------------------- */
+.preview-container {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  background: linear-gradient(135deg, var(--preview-bg), var(--bg-input));
+  border: 2px solid var(--border-default);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.preview-container:hover {
+  border-color: var(--accent-primary);
+  box-shadow: inset 0 0 20px var(--glow-soft);
+}
+
+.preview-image {
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 10px;
+}
+
+.preview-image.visible {
+  display: block;
+}
+
+.preview-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+.preview-placeholder i {
+  filter: drop-shadow(0 0 10px var(--glow-soft));
+}
+
+.preview-placeholder.hidden {
+  display: none;
+}
+
+/* ----------------------------------------
+   AA Output - 透明感のある出力欄
+   ---------------------------------------- */
+.aa-output {
+  background: linear-gradient(180deg, var(--aa-bg), var(--bg-input)) !important;
+  color: var(--aa-text) !important;
+  font-family: "MS Gothic", "Yu Gothic", "Noto Sans Mono CJK JP", monospace;
+  font-size: 0.75rem;
+  line-height: 1.15;
+  white-space: pre;
+  overflow-x: auto;
+  min-height: 300px;
+  resize: vertical;
+  border: 2px solid var(--border-default) !important;
+  border-radius: 16px !important;
+  transition: all 0.3s ease;
+}
+
+.aa-output:focus {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 4px var(--glow-soft), var(--shadow-card) !important;
+}
+
+.aa-stats {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.aa-stats span {
+  color: var(--text-secondary);
+}
+
+.aa-stats .fw-semibold {
+  color: var(--text-primary) !important;
+}
+
+.aa-stats i {
+  color: var(--accent-primary);
+  filter: drop-shadow(0 0 4px var(--glow-color));
+}
+
+/* ----------------------------------------
+   Toast
+   ---------------------------------------- */
+.toast {
+  background: var(--gradient-accent);
+  border-radius: 14px;
+  box-shadow: var(--shadow-card);
+}
+
+/* ----------------------------------------
+   Footer - 波打ち際のような
+   ---------------------------------------- */
+footer {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid var(--glass-border);
+  color: var(--text-secondary);
+  position: relative;
+}
+
+footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--gradient-accent);
+  opacity: 0.4;
+}
+
+footer p {
+  color: var(--text-secondary);
+}
+
+/* ----------------------------------------
+   Utilities
+   ---------------------------------------- */
+.text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+.text-primary {
+  color: var(--accent-primary) !important;
+}
+
+.text-warning {
+  color: var(--accent-warning) !important;
+}
+
+/* ----------------------------------------
+   Animations - 水の波紋のような
+   ---------------------------------------- */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: var(--shadow-card); }
+  50% { box-shadow: var(--shadow-card-hover); }
+}
+
+.processing {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Floating effect for icons */
+.drop-zone:hover .drop-zone-content i {
+  animation: float 2s ease-in-out infinite;
+}
+
+/* ----------------------------------------
+   Responsive
+   ---------------------------------------- */
+@media (max-width: 768px) {
+  .aa-stats {
+    flex-direction: column;
+    gap: 0.25rem !important;
+  }
+
+  .drop-zone {
+    padding: 2rem 1rem;
+  }
+
+  .aa-output {
+    font-size: 0.625rem;
+  }
+
+  .preview-container {
+    height: 240px;
+  }
+
+  body::before,
+  body::after {
+    display: none;
+  }
+}
+
+/* ----------------------------------------
+   Scrollbar - 水滴のようなスクロールバー
+   ---------------------------------------- */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--border-default), var(--border-muted));
+  border-radius: 6px;
+  border: 3px solid var(--bg-main);
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gradient-accent);
+}
+
+/* ----------------------------------------
+   Special Effects
+   ---------------------------------------- */
+
+/* Glowing border animation for active elements */
+@keyframes border-glow {
+  0%, 100% { border-color: var(--border-default); }
+  50% { border-color: var(--accent-primary); }
+}
+
+/* Water ripple effect */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, var(--glow-color) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: width 0.6s ease, height 0.6s ease, opacity 0.6s ease;
+}
+
+.ripple:active::after {
+  width: 300px;
+  height: 300px;
+  opacity: 0.3;
+}
+
+/* ----------------------------------------
+   Crop Modal Styles
+   ---------------------------------------- */
+#cropModal .modal-content {
+  background: var(--gradient-card);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+}
+
+#cropModal .modal-header {
+  background: var(--card-header-bg);
+  border-bottom: 1px solid var(--border-muted);
+  padding: 1rem 1.5rem;
+}
+
+#cropModal .modal-title {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+#cropModal .modal-title i {
+  color: var(--accent-primary);
+  filter: drop-shadow(0 0 6px var(--glow-color));
+}
+
+#cropModal .modal-body {
+  padding: 1.5rem;
+}
+
+#cropModal .modal-footer {
+  background: var(--card-header-bg);
+  border-top: 1px solid var(--border-muted);
+  padding: 1rem 1.5rem;
+}
+
+#cropModal .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.theme-light #cropModal .btn-close {
+  filter: none;
+}
+
+/* Crop Container - Cropper.js用 */
+.crop-container {
+  position: relative;
+  background: var(--preview-bg);
+  border-radius: 12px;
+  overflow: hidden;
+  min-height: 300px;
+  max-height: 60vh;
+  border: 1px solid var(--border-default);
+}
+
+#cropImage {
+  display: block;
+  max-width: 100%;
+  max-height: 60vh;
+}
+
+/* Cropper.js テーマカスタマイズ */
+.cropper-view-box,
+.cropper-face {
+  border-radius: 0;
+}
+
+.cropper-view-box {
+  outline: 2px solid var(--accent-primary);
+  outline-color: var(--accent-primary);
+}
+
+.cropper-line {
+  background-color: var(--accent-primary);
+}
+
+.cropper-point {
+  background-color: var(--accent-primary);
+  width: 10px;
+  height: 10px;
+  opacity: 1;
+}
+
+.cropper-point.point-e,
+.cropper-point.point-w {
+  width: 6px;
+  height: 20px;
+  margin-top: -10px;
+}
+
+.cropper-point.point-n,
+.cropper-point.point-s {
+  width: 20px;
+  height: 6px;
+  margin-left: -10px;
+}
+
+.cropper-dashed {
+  border-color: var(--accent-primary);
+  opacity: 0.5;
+}
+
+.cropper-modal {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Size info badge */
+.crop-info .badge {
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+  font-size: 0.75rem;
+}
+
+/* Crop instructions */
+.crop-instructions {
+  padding: 0.75rem 1rem;
+  background: var(--bg-surface);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent-primary);
+}
+
+/* Crop toolbar buttons */
+.crop-info .btn-group .btn {
+  padding: 0.25rem 0.5rem;
+}
+
+.crop-info .btn-group .btn i {
+  font-size: 0.875rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .crop-container {
+    min-height: 200px;
+    max-height: 50vh;
+  }
+  
+  #cropImage {
+    max-height: 50vh;
+  }
+  
+  #cropModal .modal-dialog {
+    margin: 0.5rem;
+  }
+  
+  #cropModal .modal-footer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  #cropModal .modal-footer .btn {
+    width: 100%;
+  }
+}
+
+/* ----------------------------------------
+   Terms of Service Modal
+   ---------------------------------------- */
+#tosModal .modal-content {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+}
+
+#tosModal .modal-header {
+  background: var(--card-header-bg);
+  border-bottom: 1px solid var(--border-default);
+}
+
+#tosModal .modal-title {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+#tosModal .modal-title i {
+  color: var(--accent-warning);
+}
+
+#tosModal .modal-body {
+  color: var(--text-primary);
+  max-height: 60vh;
+}
+
+.tos-content {
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.tos-content .lead {
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.tos-section {
+  background: var(--bg-input);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border-muted);
+}
+
+.tos-section-title {
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tos-section-content {
+  color: var(--text-secondary);
+}
+
+.tos-section-content ul {
+  margin-bottom: 0.75rem;
+  padding-left: 1.5rem;
+}
+
+.tos-section-content li {
+  margin-bottom: 0.4rem;
+}
+
+.tos-section-content p:last-child {
+  margin-bottom: 0;
+}
+
+#tosModal .form-check {
+  padding: 1rem;
+  background: var(--bg-input);
+  border-radius: 8px;
+  border: 2px solid var(--border-default);
+  transition: border-color 0.2s ease;
+}
+
+#tosModal .form-check:has(input:checked) {
+  border-color: var(--accent-success);
+  background: rgba(0, 229, 160, 0.1);
+}
+
+#tosModal .form-check-input {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-top: 0.125rem;
+}
+
+#tosModal .form-check-label {
+  color: var(--text-primary);
+  margin-left: 0.5rem;
+}
+
+#tosModal .modal-footer {
+  background: var(--bg-input);
+  border-top: 1px solid var(--border-default);
+}
+
+#tosModal #tosDecline:not(:disabled) {
+  opacity: 1;
+}
+
+#tosModal #tosAgree:disabled {
+  opacity: 0.5;
+}
+
+/* Blocked overlay when TOS not accepted */
+.app-blocked {
+  position: relative;
+}
+
+.app-blocked::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+  z-index: 999;
+}
+

@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<!--
+  CC-TwitchAAMaker v1.0
+  画像をTwitchチャット対応の点字アスキーアート（Braille AA）に変換するWebアプリケーション
+  
+  Author: CloudCandy
+  License: MIT
+  Repository: https://github.com/CloudCandy/CC-TwitchAAMaker
+-->
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CC-TwitchAAMaker v1.0</title>
+  <meta name="description" content="画像をTwitchチャット用の点字アスキーアートに変換するツール">
+  <meta name="author" content="CloudCandy">
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  >
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+  >
+  <!-- Cropper.js CSS -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.css"
+  >
+  <link rel="stylesheet" href="css/index.css">
+</head>
+<body class="theme-dark">
+  <!-- Header -->
+  <header class="app-header py-3 mb-4 shadow-sm">
+    <div class="container d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+      <div>
+        <h1 class="h4 mb-1 d-flex align-items-center gap-2">
+          <i class="bi bi-water"></i>
+          CC-TwitchAAMaker
+        </h1>
+        <p class="mb-0 small" style="color: var(--text-secondary);">画像をTwitch対応の点字AAに変換</p>
+      </div>
+      <div class="d-flex align-items-center gap-3">
+        <!-- Preset Dropdown -->
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="presetDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-bookmark"></i> プリセット
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="presetDropdown">
+            <li><h6 class="dropdown-header">組み込みプリセット</h6></li>
+            <li><button class="dropdown-item" type="button" data-preset="default">デフォルト</button></li>
+            <li><button class="dropdown-item" type="button" data-preset="photo">写真向け</button></li>
+            <li><button class="dropdown-item" type="button" data-preset="lineart">線画・ロゴ向け</button></li>
+            <li><button class="dropdown-item" type="button" data-preset="pixel">ドット絵向け</button></li>
+            <li><button class="dropdown-item" type="button" data-preset="illustration">イラスト向け</button></li>
+            <li><button class="dropdown-item" type="button" data-preset="edge">エッジ抽出</button></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><h6 class="dropdown-header">カスタム</h6></li>
+            <li><button class="dropdown-item" type="button" id="savePreset"><i class="bi bi-save"></i> 現在の設定を保存</button></li>
+            <li><button class="dropdown-item" type="button" id="loadPreset"><i class="bi bi-folder-open"></i> 保存した設定を読込</button></li>
+          </ul>
+        </div>
+        <!-- Theme Toggle -->
+        <button id="themeToggle" class="btn btn-outline-secondary btn-sm" type="button" aria-label="テーマ切替">
+          <i class="bi bi-moon-fill"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container pb-5">
+    <!-- Image Upload with Drag & Drop -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+        <h2 class="h6 mb-3 d-flex align-items-center gap-2">
+          <i class="bi bi-cloud-arrow-up"></i> 画像アップロード
+        </h2>
+        <div id="dropZone" class="drop-zone" role="button" tabindex="0" aria-label="画像をドラッグ&ドロップまたはクリックして選択">
+          <div class="drop-zone-content">
+            <i class="bi bi-droplet-half display-4 mb-2"></i>
+            <p class="mb-1">ここに画像をドラッグ&ドロップ</p>
+            <p class="small mb-0">または<span class="text-primary fw-semibold">クリックして選択</span></p>
+          </div>
+          <input type="file" class="d-none" id="imageInput" accept="image/*">
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview Section -->
+    <div class="row g-3 mb-4">
+      <div class="col-lg-6">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h2 class="h6 mb-0 d-flex align-items-center gap-2">
+                <i class="bi bi-image"></i> 元画像
+              </h2>
+              <span class="badge bg-secondary">入力</span>
+            </div>
+            <div class="preview-container">
+              <img id="imagePreview" class="preview-image" alt="元画像プレビュー">
+              <div class="preview-placeholder" id="originalPlaceholder">
+                <i class="bi bi-image display-5"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <h2 class="h6 mb-0 d-flex align-items-center gap-2">
+                <i class="bi bi-stars"></i> 処理後
+              </h2>
+              <span class="badge bg-primary">処理済</span>
+            </div>
+            <div class="preview-container">
+              <img id="ditherImagePreview" class="preview-image" alt="処理後プレビュー">
+              <div class="preview-placeholder" id="processedPlaceholder">
+                <i class="bi bi-stars display-5"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Parameters Section -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+        <h2 class="h6 mb-3 d-flex align-items-center gap-2">
+          <i class="bi bi-sliders2"></i> パラメータ設定
+        </h2>
+        
+        <!-- Basic Parameters (Always Visible) -->
+        <div class="row g-4" id="basicParams">
+          <!-- Width -->
+          <div class="col-md-6">
+            <label for="aa-width" class="form-label d-flex justify-content-between">
+              <span><i class="bi bi-arrows-expand-vertical"></i> 横幅文字数</span>
+              <span class="badge bg-primary" id="widthValue">30</span>
+            </label>
+            <input type="range" class="form-range" id="aa-width" min="10" max="100" value="30">
+            <div class="d-flex justify-content-between small" style="color: var(--text-secondary);">
+              <span>10</span>
+              <span class="text-warning fw-semibold">Twitch推奨: 30</span>
+              <span>100</span>
+            </div>
+          </div>
+
+          <!-- Contrast -->
+          <div class="col-md-6">
+            <label for="aa-contrast" class="form-label d-flex justify-content-between">
+              <span><i class="bi bi-circle-half"></i> コントラスト</span>
+              <span class="badge bg-primary" id="contrastValue">0</span>
+            </label>
+            <input type="range" class="form-range" id="aa-contrast" min="-100" max="100" value="0">
+            <div class="d-flex justify-content-between small" style="color: var(--text-secondary);">
+              <span>-100</span>
+              <span>0</span>
+              <span>+100</span>
+            </div>
+          </div>
+
+          <!-- Sharpen -->
+          <div class="col-md-6">
+            <label for="aa-sharpen" class="form-label d-flex justify-content-between">
+              <span><i class="bi bi-diamond-half"></i> シャープ強度</span>
+              <span class="badge bg-primary" id="sharpenValue">0.5</span>
+            </label>
+            <input type="range" class="form-range" id="aa-sharpen" min="0" max="2" step="0.1" value="0.5">
+            <div class="d-flex justify-content-between small" style="color: var(--text-secondary);">
+              <span>0 (なし)</span>
+              <span>1.0</span>
+              <span>2.0 (強)</span>
+            </div>
+          </div>
+
+          <!-- Binary Threshold (default visible) -->
+          <div class="col-md-6" id="binaryThresholdGroup">
+            <label for="aa-threshold" class="form-label d-flex justify-content-between align-items-center">
+              <span><i class="bi bi-brightness-high"></i> 閾値</span>
+              <div class="d-flex align-items-center gap-2">
+                <div class="form-check form-check-inline mb-0">
+                  <input class="form-check-input" type="checkbox" id="autoThreshold" checked>
+                  <label class="form-check-label small" for="autoThreshold">自動(Otsu法)</label>
+                </div>
+                <span class="badge bg-primary" id="thresholdValue">128</span>
+              </div>
+            </label>
+            <input type="range" class="form-range" id="aa-threshold" min="0" max="255" value="128">
+          </div>
+
+          <!-- Reverse Option -->
+          <div class="col-md-6">
+            <div class="form-check form-switch mt-4">
+              <input class="form-check-input" type="checkbox" id="aa-reverse" checked>
+              <label class="form-check-label" for="aa-reverse">
+                <i class="bi bi-arrow-repeat"></i> モノクロ反転
+              </label>
+            </div>
+          </div>
+
+          <!-- Contour Enhancement -->
+          <div class="col-md-6">
+            <div class="form-check form-switch mt-4">
+              <input class="form-check-input" type="checkbox" id="aa-contour">
+              <label class="form-check-label" for="aa-contour">
+                <i class="bi bi-border-style"></i> 輪郭を強調する
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Advanced Toggle Button -->
+        <div class="mt-3">
+          <button type="button" class="btn btn-outline-secondary btn-sm" id="toggleAdvanced" data-expanded="false">
+            <i class="bi bi-chevron-down"></i> 詳細設定を表示
+          </button>
+        </div>
+
+        <!-- Advanced Parameters (Hidden by Default) -->
+        <div class="row g-4 mt-2" id="advancedParams" style="display: none;">
+          <!-- Gamma -->
+          <div class="col-md-6">
+            <label for="aa-gamma" class="form-label d-flex justify-content-between">
+              <span><i class="bi bi-sun"></i> ガンマ補正</span>
+              <span class="badge bg-primary" id="gammaValue">1.0</span>
+            </label>
+            <input type="range" class="form-range" id="aa-gamma" min="0.1" max="3.0" step="0.1" value="1.0">
+            <div class="d-flex justify-content-between small" style="color: var(--text-secondary);">
+              <span>0.1 (暗)</span>
+              <span>1.0</span>
+              <span>3.0 (明)</span>
+            </div>
+          </div>
+
+          <!-- Noise Reduction -->
+          <div class="col-md-6">
+            <label for="aa-noise" class="form-label d-flex justify-content-between">
+              <span><i class="bi bi-magic"></i> ノイズ除去</span>
+            </label>
+            <select class="form-select" id="aa-noise">
+              <option value="none">なし</option>
+              <option value="median">メディアンフィルタ</option>
+              <option value="gaussian">ガウシアンブラー</option>
+            </select>
+          </div>
+
+          <!-- Noise Strength (conditional) -->
+          <div class="col-md-6" id="noiseStrengthGroup" style="display: none;">
+            <label for="aa-noise-strength" class="form-label d-flex justify-content-between">
+              <span><i class="bi bi-sliders"></i> ノイズ除去強度</span>
+              <span class="badge bg-primary" id="noiseStrengthValue">1</span>
+            </label>
+            <input type="range" class="form-range" id="aa-noise-strength" min="1" max="3" step="1" value="1">
+            <div class="d-flex justify-content-between small" style="color: var(--text-secondary);">
+              <span>1 (弱)</span>
+              <span>2</span>
+              <span>3 (強)</span>
+            </div>
+          </div>
+
+          <!-- Edge Filter -->
+          <div class="col-md-6">
+            <label for="aa-edge" class="form-label d-flex justify-content-between">
+              <span><i class="bi bi-border-style"></i> エッジ検出</span>
+            </label>
+            <select class="form-select" id="aa-edge">
+              <option value="none">なし</option>
+              <optgroup label="基本">
+                <option value="sobel">Sobel</option>
+                <option value="prewitt">Prewitt</option>
+                <option value="laplacian">Laplacian</option>
+              </optgroup>
+              <optgroup label="高精度">
+                <option value="scharr">Scharr（高精度）</option>
+                <option value="canny">Canny（最高品質）</option>
+              </optgroup>
+              <optgroup label="輪郭強調">
+                <option value="dog">DoG（差分ガウス）</option>
+                <option value="edge-enhance">輪郭強調</option>
+              </optgroup>
+            </select>
+          </div>
+
+          <!-- Threshold Type -->
+          <div class="col-md-6">
+            <label for="aa-threshold-type" class="form-label d-flex justify-content-between">
+              <span><i class="bi bi-brightness-high"></i> 閾値方式</span>
+            </label>
+            <select class="form-select" id="aa-threshold-type">
+              <option value="binary">二値化閾値</option>
+              <option value="adaptive">適応的閾値</option>
+            </select>
+          </div>
+
+          <!-- Adaptive Threshold Block Size (conditional) -->
+          <div class="col-md-6" id="adaptiveBlockSizeGroup" style="display: none;">
+            <label for="aa-adaptive-blocksize" class="form-label d-flex justify-content-between">
+              <span><i class="bi bi-grid"></i> ブロックサイズ</span>
+              <span class="badge bg-primary" id="adaptiveBlockSizeValue">11</span>
+            </label>
+            <input type="range" class="form-range" id="aa-adaptive-blocksize" min="3" max="31" step="2" value="11">
+            <div class="d-flex justify-content-between small" style="color: var(--text-secondary);">
+              <span>3 (細)</span>
+              <span>15</span>
+              <span>31 (粗)</span>
+            </div>
+          </div>
+
+          <!-- Adaptive Threshold C (conditional) -->
+          <div class="col-md-6" id="adaptiveCGroup" style="display: none;">
+            <label for="aa-adaptive-c" class="form-label d-flex justify-content-between">
+              <span><i class="bi bi-plus-slash-minus"></i> 補正値(C)</span>
+              <span class="badge bg-primary" id="adaptiveCValue">2</span>
+            </label>
+            <input type="range" class="form-range" id="aa-adaptive-c" min="-10" max="20" step="1" value="2">
+            <div class="d-flex justify-content-between small" style="color: var(--text-secondary);">
+              <span>-10</span>
+              <span>5</span>
+              <span>20</span>
+            </div>
+          </div>
+
+          <!-- Dither Option -->
+          <div class="col-md-6">
+            <div class="form-check form-switch mt-4">
+              <input class="form-check-input" type="checkbox" id="aa-dither">
+              <label class="form-check-label" for="aa-dither">
+                <i class="bi bi-grid-3x3-gap"></i> ディザリング
+              </label>
+            </div>
+          </div>
+
+          <!-- Blank Character Option -->
+          <div class="col-md-6">
+            <div class="form-check form-switch mt-4">
+              <input class="form-check-input" type="checkbox" id="aa-dot-blank" checked>
+              <label class="form-check-label" for="aa-dot-blank">
+                <i class="bi bi-square"></i> 空白を1ドット文字で統一
+                <small class="d-block text-muted" style="font-size: 0.75rem;">幅ズレ防止（⡀）/ OFF時は空白（⠀）</small>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Result Section -->
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
+          <h2 class="h6 mb-0 d-flex align-items-center gap-2">
+            <i class="bi bi-file-earmark-text"></i> 生成AA
+          </h2>
+          <div class="d-flex align-items-center gap-3">
+            <!-- Stats -->
+            <div class="aa-stats d-flex gap-3 small">
+              <span>
+                <i class="bi bi-arrows-expand-vertical"></i> 幅: <span id="statCols" class="fw-semibold">0</span>文字
+              </span>
+              <span>
+                <i class="bi bi-list-ol"></i> 行: <span id="statRows" class="fw-semibold">0</span>行
+              </span>
+              <span>
+                <i class="bi bi-hash"></i> 総文字: <span id="statTotal" class="fw-semibold">0</span>
+              </span>
+            </div>
+            <!-- Copy Button -->
+            <button id="copyAA" class="btn btn-primary btn-sm" type="button">
+              <i class="bi bi-clipboard"></i> コピー
+            </button>
+          </div>
+        </div>
+        <textarea 
+          class="form-control aa-output" 
+          id="aa-result" 
+          rows="15" 
+          readonly 
+          placeholder="画像をアップロードするとここにAAが表示されます..."
+          aria-label="生成されたアスキーアート"
+        ></textarea>
+      </div>
+    </div>
+  </main>
+
+  <!-- Toast Container -->
+  <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="toast" class="toast align-items-center border-0" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body text-white">
+          <i class="bi bi-check-circle me-2"></i>
+          <span id="toastMessage">コピーしました！</span>
+        </div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="閉じる"></button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Crop Modal -->
+  <div class="modal fade" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="cropModalLabel">
+            <i class="bi bi-crop"></i> 画像をクリッピング
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="閉じる"></button>
+        </div>
+        <div class="modal-body">
+          <div class="crop-instructions mb-3">
+            <small class="text-secondary">
+              <i class="bi bi-info-circle"></i> 
+              ドラッグで範囲を選択・調整してください。クリッピングせずに確定すると画像全体を使用します。
+            </small>
+          </div>
+          <div class="crop-container" id="cropContainer">
+            <img id="cropImage" src="" alt="クリッピング対象画像">
+          </div>
+          <div class="crop-info mt-3 d-flex flex-wrap justify-content-between align-items-center gap-2">
+            <div class="d-flex flex-wrap gap-2">
+              <span class="badge bg-secondary" id="cropSizeInfo">選択範囲: --</span>
+              <span class="badge bg-info" id="cropOriginalSize">元画像: --</span>
+            </div>
+            <div class="btn-group btn-group-sm">
+              <button type="button" class="btn btn-outline-secondary" id="cropRotateLeft" title="左に90°回転">
+                <i class="bi bi-arrow-counterclockwise"></i>
+              </button>
+              <button type="button" class="btn btn-outline-secondary" id="cropRotateRight" title="右に90°回転">
+                <i class="bi bi-arrow-clockwise"></i>
+              </button>
+              <button type="button" class="btn btn-outline-secondary" id="cropFlipH" title="水平反転">
+                <i class="bi bi-symmetry-vertical"></i>
+              </button>
+              <button type="button" class="btn btn-outline-secondary" id="cropFlipV" title="垂直反転">
+                <i class="bi bi-symmetry-horizontal"></i>
+              </button>
+              <button type="button" class="btn btn-outline-secondary" id="cropReset" title="リセット">
+                <i class="bi bi-x-circle"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" id="cropSkip">
+            <i class="bi bi-arrow-right"></i> クリッピングせずに使用
+          </button>
+          <button type="button" class="btn btn-primary" id="cropConfirm">
+            <i class="bi bi-check-lg"></i> クリッピングして確定
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Terms of Service Modal -->
+  <div class="modal fade" id="tosModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="tosModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tosModalLabel">
+            <i class="bi bi-shield-exclamation"></i> 利用規約
+          </h5>
+        </div>
+        <div class="modal-body">
+          <div class="tos-content">
+            <p class="lead mb-4">CC-TwitchAAMakerをご利用いただく前に、以下の利用規約をよくお読みください。</p>
+            
+            <div class="tos-section mb-4">
+              <h6 class="tos-section-title"><i class="bi bi-exclamation-triangle-fill text-warning"></i> 1. 免責事項</h6>
+              <div class="tos-section-content">
+                <p>本サービス（CC-TwitchAAMaker）を利用したことにより発生したいかなる損害についても、開発者は一切の責任を負いません。これには以下が含まれますが、これに限定されません：</p>
+                <ul>
+                  <li>Twitch、Discord、その他プラットフォームでのアカウント停止（BAN）</li>
+                  <li>コミュニティからの追放やモデレーション措置</li>
+                  <li>その他の直接的・間接的な不利益</li>
+                </ul>
+                <p class="mb-0"><strong>本サービスの利用は完全に自己責任となります。</strong></p>
+              </div>
+            </div>
+            
+            <div class="tos-section mb-4">
+              <h6 class="tos-section-title"><i class="bi bi-slash-circle-fill text-danger"></i> 2. 禁止事項</h6>
+              <div class="tos-section-content">
+                <p>以下の行為は固く禁止されています：</p>
+                <ul>
+                  <li><strong>荒らし行為：</strong>本サービスで生成したAAを使用して、チャットやコミュニティを荒らす行為</li>
+                  <li><strong>スパム行為：</strong>同一または類似のAAを大量・連続投稿する行為</li>
+                  <li><strong>嫌がらせ：</strong>特定の個人やグループに対する嫌がらせ目的での使用</li>
+                  <li><strong>違法コンテンツ：</strong>違法、有害、または不適切なコンテンツの生成・配布</li>
+                  <li><strong>著作権侵害：</strong>著作権で保護された画像の無断使用</li>
+                </ul>
+                <p class="mb-0 text-danger"><strong><i class="bi bi-exclamation-octagon"></i> 荒らし行為が確認された場合、本サービスの利用権利を永久に剥奪します。</strong></p>
+              </div>
+            </div>
+            
+            <div class="tos-section mb-4">
+              <h6 class="tos-section-title"><i class="bi bi-hand-thumbs-up-fill text-success"></i> 3. 適切な使用方法</h6>
+              <div class="tos-section-content">
+                <p>本サービスは以下のような用途での使用を想定しています：</p>
+                <ul>
+                  <li>配信者への応援メッセージとしてのAA投稿</li>
+                  <li>コミュニティ内での適度なエンターテインメント</li>
+                  <li>個人的な創作活動</li>
+                </ul>
+                <p class="mb-0">各プラットフォームの利用規約やコミュニティガイドラインを遵守してください。</p>
+              </div>
+            </div>
+            
+            <div class="tos-section mb-4">
+              <h6 class="tos-section-title"><i class="bi bi-arrow-repeat"></i> 4. 規約の変更</h6>
+              <div class="tos-section-content">
+                <p class="mb-0">本規約は予告なく変更される場合があります。変更後も継続して本サービスを利用された場合、変更後の規約に同意したものとみなします。</p>
+              </div>
+            </div>
+            
+            <div class="tos-section">
+              <h6 class="tos-section-title"><i class="bi bi-info-circle-fill text-info"></i> 5. お問い合わせ</h6>
+              <div class="tos-section-content">
+                <p class="mb-0">本サービスに関するお問い合わせは、GitHubリポジトリのIssuesまたは開発者のSNSアカウントまでお願いいたします。</p>
+              </div>
+            </div>
+          </div>
+          
+          <hr class="my-4">
+          
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="tosAgreeCheck">
+            <label class="form-check-label" for="tosAgreeCheck">
+              <strong>上記の利用規約を読み、内容に同意します。</strong>
+            </label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="tosDecline" disabled>
+            <i class="bi bi-x-lg"></i> 同意しない
+          </button>
+          <button type="button" class="btn btn-primary" id="tosAgree" disabled>
+            <i class="bi bi-check-lg"></i> 同意して利用開始
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="text-center py-4 small">
+    <p class="mb-1" style="color: var(--text-secondary);">CC-TwitchAAMaker v1.0 | &copy; 2025 CloudCandy</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <!-- Cropper.js -->
+  <script src="https://cdn.jsdelivr.net/npm/cropperjs@1.6.2/dist/cropper.min.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>
