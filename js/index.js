@@ -1451,6 +1451,7 @@ class AAMakerApp {
       // Input
       imageInput: document.getElementById('imageInput'),
       dropZone: document.getElementById('dropZone'),
+      pasteFromClipboard: document.getElementById('pasteFromClipboard'),
       
       // Preview
       imagePreview: document.getElementById('imagePreview'),
@@ -1554,6 +1555,12 @@ class AAMakerApp {
     this.elements.dropZone.addEventListener('dragover', (e) => this.handleDragOver(e));
     this.elements.dropZone.addEventListener('dragleave', (e) => this.handleDragLeave(e));
     this.elements.dropZone.addEventListener('drop', (e) => this.handleDrop(e));
+    
+    // Clipboard paste (Ctrl+V / Cmd+V)
+    document.addEventListener('paste', (e) => this.handlePaste(e));
+    
+    // Clipboard paste button
+    this.elements.pasteFromClipboard.addEventListener('click', () => this.readFromClipboard());
     
     // Parameters - Range inputs (常にリアルタイムプレビュー)
     const rangeInputs = [
@@ -1905,6 +1912,65 @@ class AAMakerApp {
     const files = e.dataTransfer.files;
     if (files.length > 0 && files[0].type.startsWith('image/')) {
       this.loadImage(files[0]);
+    }
+  }
+  
+  /**
+   * クリップボード貼り付けハンドラ
+   */
+  handlePaste(e) {
+    // モーダルが開いている場合は無視（利用規約モーダル等）
+    const openModals = document.querySelectorAll('.modal.show');
+    if (openModals.length > 0) return;
+    
+    const items = e.clipboardData?.items;
+    if (!items) return;
+    
+    for (const item of items) {
+      if (item.type.startsWith('image/')) {
+        e.preventDefault();
+        const file = item.getAsFile();
+        if (file) {
+          this.loadImage(file);
+          this.showToast('クリップボードから画像を貼り付けました', 'success');
+        }
+        return;
+      }
+    }
+  }
+  
+  /**
+   * クリップボードから画像を読み込む（ボタン用）
+   */
+  async readFromClipboard() {
+    try {
+      // Clipboard API を使用
+      const clipboardItems = await navigator.clipboard.read();
+      
+      for (const item of clipboardItems) {
+        // 画像タイプを探す
+        const imageType = item.types.find(type => type.startsWith('image/'));
+        if (imageType) {
+          const blob = await item.getType(imageType);
+          const file = new File([blob], 'clipboard-image.png', { type: imageType });
+          this.loadImage(file);
+          this.showToast('クリップボードから画像を読み込みました', 'success');
+          return;
+        }
+      }
+      
+      // 画像が見つからない場合
+      this.showToast('クリップボードに画像がありません', 'warning');
+      
+    } catch (error) {
+      console.error('Clipboard read error:', error);
+      
+      // 権限エラーの場合
+      if (error.name === 'NotAllowedError') {
+        this.showToast('クリップボードへのアクセスが許可されていません。Ctrl+Vで貼り付けてください。', 'warning');
+      } else {
+        this.showToast('クリップボードの読み取りに失敗しました。Ctrl+Vで貼り付けてください。', 'warning');
+      }
     }
   }
   
