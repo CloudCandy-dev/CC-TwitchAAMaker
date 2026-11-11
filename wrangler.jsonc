@@ -1,0 +1,18 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Cloudflare Workers（静的アセット配信）用設定
+  // Worker名は Cloudflare 側で作成したプロジェクト名に合わせる
+  "name": "cc-twitchaamaker",
+  "compatibility_date": "2026-11-10",
+  "observability": {
+    "enabled": true
+  },
+  // public フォルダ内の構成をそのまま URL のパスとして配信する
+  // （public/CC-TwitchAAMaker/index.html が /CC-TwitchAAMaker/ で返る）
+  // ※ assets.base_path はこのアカウントでは有効化されていないため使わない
+  // ルートはダッシュボード側で追加するため、ここには書かない
+  "assets": {
+    "directory": "./public",
+    "not_found_handling": "single-page-application"
+  }
+}
